@@ -1,0 +1,369 @@
+<!DOCTYPE html> 
+<html>
+<head>
+	<title>HP Mobile Fleet</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="lib/jquery-mobile/jquery.mobile-1.4.2.min.css" />
+	<link rel="stylesheet" href="css/main.css" />
+
+	<script src="lib/jquery/jquery-1.11.1.js"></script>
+	<script src="lib/jquery-mobile/jquery.mobile-1.4.2.js"></script>
+	<script src="js/main.js"></script>
+</head>
+<body>
+	<!-- Tabs Page -->
+	<div data-role="page" id="tabsPage">
+		<div data-role="header">
+			<h1>Fleet Mileage</h1>
+		</div>
+		<div data-role="tabs">
+			<div data-role="navbar">
+				<ul>
+					<li><a href="#trip-tab" data-icon="grid" data-ajax="false" class="ui-btn-active">Trip</a></li>
+					<li><a href="#fuel-tab" data-icon="grid" data-ajax="false">Fuel</a></li>
+					<li><a href="#reports-tab" data-icon="star" data-ajax="false">Reports</a></li>
+				</ul>
+			</div>
+
+			<!-- Trip Tab -->
+			<div id="trip-tab" class="ui-body-d ui-content">
+				<!-- Trips by Month -->
+				<div data-role="arrowlist" class="arrowlist">
+					<span>
+						<div class="arrowlist-title">April 2014</div>
+						<div class="arrowlist-content">
+							<h3 class="ui-bar ui-bar-a ui-corner-all">
+								<div class="ui-grid-a">
+									<div class="ui-block-a">
+										April 30, 2014
+									</div>
+									<div class="ui-block-b text-right">
+										587.7 miles
+									</div>
+								</div>
+							</h3>
+							<div data-role="collapsible-set" data-inset="false">
+								<div data-role="collapsible">
+									<h3>Monday, April 28<span class="trip-miles">73 miles</span></h3>
+									<ul data-role="listview" data-inset="false">
+										<li>
+											<table width="100%">
+												<tr>
+													<td width="50%" valign="center">
+														<table>
+															<tr>
+																<td align="right">From:</td>
+																<td>Destination A</td>
+															</tr>
+															<tr>
+																<td align="right">To:</td>
+																<td>Destination B</td>
+															</tr>
+														</table>
+													</td>
+													<td width="50%" valign="center" align="right">
+														17 Miles
+													</td>
+												</tr>
+											</table>
+										</li>
+										<li>
+											<table width="100%">
+												<tr>
+													<td width="50%" valign="center">
+														<table>
+															<tr>
+																<td align="right">From:</td>
+																<td>Destination A</td>
+															</tr>
+															<tr>
+																<td align="right">To:</td>
+																<td>Destination B</td>
+															</tr>
+														</table>
+													</td>
+													<td width="50%" valign="center" align="right">
+														56 Miles
+													</td>
+												</tr>
+											</table>
+										</li>
+									</ul>
+								</div>
+								<div data-role="collapsible">
+									<h3>Friday, April 25<span class="trip-miles">24 miles</span></h3>
+									<ul data-role="listview" data-inset="false">
+										<li>
+											<table width="100%">
+												<tr>
+													<td width="50%" valign="center">
+														<table>
+															<tr>
+																<td align="right">From:</td>
+																<td>Destination A</td>
+															</tr>
+															<tr>
+																<td align="right">To:</td>
+																<td>Destination B</td>
+															</tr>
+														</table>
+													</td>
+													<td width="50%" valign="center" align="right">
+														24 Miles
+													</td>
+												</tr>
+											</table>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</span>
+					<span>
+						<div class="arrowlist-title">January 2014</div>
+						<div class="arrowlist-content">January content</div>
+					</span>
+					<span>
+						<div class="arrowlist-title">February 2014</div>
+						<div class="arrowlist-content">February content</div>
+					</span>
+				</div>
+
+				<div class="hp-footer text-center" data-role="footer" data-position="fixed" data-tap-toggle="false">
+					<a href="#enterTripDataPage" class="hp-submit ui-btn">Enter Trip Data</a>
+				</div>
+			</div>
+
+			<!-- Fuel Tab -->
+			<div id="fuel-tab" mvc-controller="fuelCtrl">
+				<form>
+					<h2 class="text-center">Log Fuel Purchase Below</h2>
+					<div class="horizontal-line"></div>
+					<div class="ui-field-contain no-field-separator">
+						<label for="date-fuel-time">Date</label>
+						<input type="date" name="date-fuel-time" mvc-model="date">
+					</div>
+					<div class="ui-field-contain no-field-separator">
+						<label for="num-fuel-odometer">Odometer Reading</label>
+						<input type="number" name="num-fuel-odometer" placeholder="0" mvc-model="odometer">
+					</div>
+					<div class="horizontal-line"></div>
+					<div class="ui-field-contain no-field-separator">
+						<label for="num-fuel-price">Volume Price per Gallon</label>
+						<input type="number" name="num-fuel-price" placeholder="0.00" mvc-model="fuelPrice">
+					</div>
+					<div class="ui-field-contain no-field-separator">
+						<label for="num-fuel-gallons">Gallons</label>
+						<input type="number" name="num-fuel-gallons" placeholder="0" mvc-model="numGallons">
+					</div>
+					<div class="ui-field-contain no-field-separator">
+						<label for="num-fuel-cost">Total Cost of Fuel Purchased</label>
+						<input type="number" name="num-fuel-cost" placeholder="0.00" mvc-model="totalCost">
+					</div>
+					<div class="horizontal-line"></div>
+					<div class="ui-grid-a grid-padding">
+						<div class="ui-block-a">
+							Volume of Gas Purchased
+						</div>
+						<div class="ui-block-b" mvc-model="gallonsText">
+							{{gallonsText}} gallons
+						</div>
+					</div>
+					<div class="ui-grid-a grid-padding">
+						<div class="ui-block-a">
+							Miles per Gallon:
+						</div>
+						<div class="ui-block-b" mvc-model="mpgText">
+							{{mpgText}}
+						</div>
+					</div>
+					<div class="hp-footer text-center" data-role="footer" data-tap-toggle="false">
+						<fieldset class="ui-grid-a">
+							<div class="ui-block-a"><input data-icon="check" type="button" value="Save" class="hp-submit" mvc-click="save()"></div>
+							<div class="ui-block-b"><input data-icon="back" type="button" value="Cancel" class="hp-cancel" mvc-click="cancel()"></div>
+						</fieldset>
+					</div>
+				</form>
+			</div>
+
+			<!-- Reports Tab -->
+			<div id="reports-tab" class="ui-body-d ui-content" mvc-controller="reportsCtrl">
+				<div data-role="arrowlist" class="arrowlist">
+					<span>
+						<div class="arrowlist-title">January 2014</div>
+						<div class="arrowlist-content">
+							<table width="100%">
+								<tr>
+									<th colspan="2" align="left">Trip Tracking</th>
+								</tr>
+								<tr>
+									<td width="70%">Beginning Odometer</td>
+									<td width="30%" mvc-model="beginningOdometer">{{beginningOdometer}} mi</td>
+								</tr>
+								<tr>
+									<td width="70%">Ending Odometer</td>
+									<td width="30%" mvc-model="endingOdometer">{{endingOdometer}} mi</td>
+								</tr>
+								<tr>
+									<td width="70%">Total Mileage Driven Business</td>
+									<td width="30%" mvc-model="totalBusinessMileage">{{totalBusinessMileage}} mi</td>
+								</tr>
+								<tr>
+									<td width="70%">Total Mileage Driven Personal</td>
+									<td width="30%" mvc-model="totalPersonalMileage">{{totalPersonalMileage}} mi</td>
+								</tr>
+								<tr>
+									<td width="70%">Percent used for Business</td>
+									<td width="30%" mvc-model="percentBusiness">{{percentBusiness}}%</td>
+								</tr>
+								<tr>
+									<td width="70%">Percent used for Personal</td>
+									<td width="30%" mvc-model="percentPersonal">{{percentPersonal}}%</td>
+								</tr>
+							</table>
+							<table width="100%">
+								<tr>
+									<th colspan="2" align="left">Fuel Tracking</th>
+								</tr>
+								<tr>
+									<td width="70%">Total Fuel Purchases</td>
+									<td width="30%" mvc-model="totalFuelPurchases">${{totalFuelPurchases}}</td>
+								</tr>
+								<tr>
+									<td width="70%">Average MPG</td>
+									<td width="30%" mvc-model="averageMPG">{{averageMPG}} mpg</td>
+								</tr>
+							</table>
+						</div>
+					</span>
+					<span>
+						<div class="arrowlist-title">February 2014</div>
+						<div class="arrowlist-content">
+							February content
+						</div>
+					</span>
+				</div>
+				<!-- <a href="./partials/firstvisit.html" class="ui-btn">First Visit Page</a>  -->
+				<a href="#firstVisitPage" class="ui-btn hp-submit">eMail Report</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Enter Trip Data Page -->
+	<div data-role="page" id="enterTripDataPage" mvc-controller="enterTripDataCtrl">
+		<div data-role="header">
+			<h1>Enter Trip</h1>
+		</div>
+		<form>
+			<!-- <fieldset data-role="controlgroup" data-type="horizontal" class="text-center">
+				<input type="radio" name="radio-choice-h-2" id="radio-choice-h-2-business" value="on" checked="checked">
+				<label for="radio-choice-h-2-business">Business</label>
+				<input type="radio" name="radio-choice-h-2" id="radio-choice-h-2-personal" value="off">
+				<label for="radio-choice-h-2-personal">Personal</label>
+			</fieldset> -->
+			<div class="ui-field-contain no-field-separator">
+				<label for="date-trip-fuel-time">Date</label>
+				<input type="date" name="date-trip-fuel-time" mvc-model="date">
+			</div>
+			<label>
+				<input type="checkbox" name="checkbox-business" mvc-model="businessTrip">Business Trip
+			</label>
+			<div class="ui-field-contain">
+				<!-- <label for="select-native-1">Favorites:</label> -->
+				<select name="select-native-trips" mvc-model="favoriteTrip">
+					<option mvc-repeat="favoriteTrips"></option>
+				</select>
+			</div>
+			<div class="ui-field-contain no-field-separator">
+				<label for="num-trip-odometer">Beginning Odometer Reading</label>
+				<input type="number" name="num-trip-odometer" placeholder="0" mvc-model="beginningOdometer">
+			</div>
+			<div class="ui-field-contain no-field-separator">
+				<label for="text-trip-start-location">Ending Odometer Reading</label>
+				<input type="text" name="text-trip-start-location" placeholder="e.g. Home" mvc-model="endingOdometer">
+			</div>
+			<a class="ui-btn" mvc-click="saveTrip()">Save Trip</a>
+		</form>
+	</div>
+
+	<!-- First Visit Page -->
+	<div data-role="page" id="firstVisitPage" mvc-controller="firstVisitCtrl">
+		<div data-role="header">
+			<h1>Fleet Mileage</h1>
+		</div>
+		<div role="main" class="ui-content">
+			<fieldset data-role="controlgroup" data-type="horizontal" class="text-center">
+				<input type="radio" name="radio-choice-h-2" id="radio-choice-h-2-imperial" value="imperial" mvc-model="measurementUnit">
+				<label for="radio-choice-h-2-imperial">Imperial</label>
+				<input type="radio" name="radio-choice-h-2" id="radio-choice-h-2-metric" value="metric" mvc-model="measurementUnit">
+				<label for="radio-choice-h-2-metric">Metric</label>
+			</fieldset>
+
+			<br>
+
+			<label for="text-employee-number">
+				Employee Number
+				<span class="required-field">*</span>
+			</label>
+			<input type="text" name="text-employee-number" mvc-model="employeeNumber">
+
+			<label for="select-vehicle-year" class="select">Vehicle Year</label>
+			<select name="select-vehicle-year" data-native-menu="true" mvc-model="vehicleYear">
+				<option mvc-repeat="vehicleYears"></option>
+			</select>
+
+			<label for="select-vehicle-make" class="select">Vehicle Make</label>
+			<select name="select-vehicle-make" data-native-menu="true" mvc-model="vehicleMake">
+				<option mvc-repeat="vehicleMakes"></option>
+			</select>
+
+			<label for="text-vehicle-model">Vehicle Model</label>
+			<input type="text" name="text-vehicle-model" mvc-model="vehicleModel">
+
+			<div class="ui-grid-a">
+				<div class="ui-block-a">
+					<label for="text-license-plate">License Plate</label>
+					<input type="text" name="text-license-plate" mvc-model="licensePlate">
+				</div>
+				<div class="ui-block-b">
+					<label for="select-state" class="select">State</label>
+					<select name="select-state" data-native-menu="true" mvc-model="state">
+						<option mvc-repeat="states"></option>
+					</select>
+				</div>
+			</div>
+
+			<label for="text-vin-number">
+				VIN Number
+				<span class="required-field">*</span>
+			</label>
+			<input type="text" name="text-vin-number" mvc-model="vinNumber">
+
+			<label for="text-odometer-reading">
+				Odometer Reading <span class="required-field">*</span>
+			</label>
+			<table width="100%">
+				<tr>
+					<td width="98%">
+						<input type="number" name="num-odometer-reading" mvc-model="odometer">
+					</td>
+					<td width="2%">
+						Mi
+					</td>
+				</tr>
+			</table>
+
+			<fieldset class="ui-grid-a">
+				<div class="ui-block-a">
+					<input type="submit" value="Submit" data-theme="a" mvc-click="submit()">
+				</div>
+				<div class="ui-block-b">
+					<input type="reset" value="Cancel" data-theme="b" mvc-click="cancel()">
+				</div>
+			</fieldset>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,108 @@
+/* HP fonts */
+@font-face {
+	font-family: "HP Simplified";
+	src: url("fonts/HPSimplified_Rg.ttf");
+}
+@font-face {
+	font-family: "HP Simplified Light";
+	src: url("fonts/HPSimplified_Lt.ttf");
+}
+@font-face {
+	font-family: "HP Simplified Bold";
+	src: url("fonts/HPSimplified.ttf");
+}
+@font-face {
+	font-family: "HP Simplified Italic";
+	src: url("fonts/HPSimplified_It.ttf");
+}
+body,
+input,
+select,
+textarea,
+button,
+.ui-btn {
+	font-family: "HP Simplified";
+}
+h2 {
+
+}
+h3 {
+	font-size: 18px;
+}
+#geo-output {
+	width: 100%;
+	height: 150px;
+	font-weight: bold;
+	color: #ff0000;
+}
+.two-column-data-table {
+	margin-top: 1em;
+	width: 100%;
+}
+.ui-hide-label.ui-br, .no-field-separator {
+	border-bottom-width: 0;
+}
+.ui-field-contain.ui-hide-label, .no-field-separator {
+	margin: 1em 0;
+	padding: 0;
+}
+.text-right {
+	text-align: right;
+}
+.text-center {
+	text-align: center;
+}
+.trip-miles {
+	float: right;
+	font-weight: normal;
+}
+.grid-padding > div {
+	padding: 5px;
+}
+.required-field {
+	color: #ff0000;
+}
+.horizontal-line {
+	width: 100%;
+	height: 2px;
+	background-color: #0096D6;
+}
+
+/* HP Styles */
+/*.ui-input-btn input.hp-submit {
+	background-color: #FF9700;
+	opacity: 0.9;
+}
+.ui-input-btn input.hp-cancel {
+	background-color: #767676;
+	opacity: 0.9;
+}
+.ui-btn.ui-input-btn {
+	color: #fff;
+	background-color: transparent;
+}
+.hp-footer {
+	background-color: #CCCCCC;
+}*/
+.ui-content {
+	padding: 0px;
+}
+
+/** Arrow list plugin */
+.arrowlist-header {
+	text-align: center;
+	margin: 0 -1em;
+	padding: 10px;
+}
+.ui-collapsible-set .ui-collapsible {
+	margin: -1px 0em 0;
+}
+div[data-role="arrowlist"] > span > div {
+	display: none;
+}
+.arrowlist > h3 {
+	text-align: center;
+}
+.arrowlist-header-title {
+	margin-top: 3px;
+}
