@@ -110,3 +110,17 @@
 		}
 	});
 })(jQuery);
+
+function generateJQMDateStr() {
+	var today = new Date();
+	var dd = today.getDate().toString();
+	var mm = (today.getMonth() + 1).toString(); // January is 0
+	var yyyy = today.getFullYear().toString();
+
+	if(dd.length <= 1)
+		dd = "0" + dd;
+	if(mm.length <= 1)
+		mm = "0" + mm;
+
+	return yyyy + '-' + mm + '-' + dd;
+}

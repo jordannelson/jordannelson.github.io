@@ -41,6 +41,9 @@ var MVC = (function($) {
 	// Maps a JQM page to an array of model references that exist on that page
 	var pageModels = {};
 
+	// Hash of all the factories
+	var factories = {};
+
 	// Prefix for special data attributes used by this framework
 	var attrPrefix = 'mvc';
 
@@ -64,6 +67,39 @@ var MVC = (function($) {
 	// where arrayVariable is an array of objects defined in the controller.
 	var attributes = ['controller','model','click', 'repeat'];
 
+	function Scope(model) {
+		this.model = model;
+	}
+
+	// Declare an event to watch for
+	Scope.prototype.$on = function(eventName, callback) {
+		if(!Scope.events.hasOwnProperty(eventName))
+			Scope.events[eventName] = [];
+		Scope.events[eventName].push(callback);
+	}
+
+	// Trigger the event
+	Scope.prototype.$broadcast = function(eventName) {
+		if(Scope.events.hasOwnProperty(eventName)) {
+			var arr = Scope.events[eventName];
+			for(var x = 0, l = arr.length; x < l; x++) {
+				arr[x].call(this);
+			}
+		}
+	}
+
+	// Force an update on the view
+	Scope.prototype.$apply = function() {
+		// TODO: This needs to call an updateRepeatElements method.
+		updateView(this.model);
+	}
+
+	// Static variable for all Scope instances to keep track of events
+	Scope.events = {};
+
+	// TODO
+	var $rootScope = new Scope();
+
 	// The Model object that is automatically generated for every Controller and View
 	function Model(jqmPageId, controller) {
 		// The ID of the JQM page/tab div
@@ -84,7 +120,7 @@ var MVC = (function($) {
 		// and so the "value" property of this DOM element will be set to whatever
 		// scope.variableName is set to. In additon, methodName() will be called when the
 		// button is clicked. This mapping is stored in the "elements" hash below.
-		this.scope = {};
+		this.scope = new Scope(this);
 
 		// The JQuery object that references the view element in the DOM. This is the
 		// element with the mvc-controller="controllerName" attribute.
@@ -94,16 +130,18 @@ var MVC = (function($) {
 		// utilizes. The hash is organized first by each attribute type, and then that points
 		// to an inner hash which contains all the elements with the given attribute. Each of
 		// those elements' key is their attribute's value, since that value is the name of the
-		// variable defined on the $scope object in the controller.
+		// variable defined on the $scope object in the controller. The 'click' attribute goes
+		// one level further and stores an array of elements, since multiple elements can call
+		// the same method.
 		// 
 		// Ex: Remember, 'variableName' is the value of the attribute such as mvc-model="variableName"
 		//     and it is synced with $scope.variableName. This hash allows us to do things like:
 		//         $scope[variableName] = getValueOfDOMElement(modelElements[variableName]);
 		// 
 		// {
-		//   {'click': {'methodName': refToDomElement, 'methodName2': refToDomElement2 } },
-		//   {'model': {'variableName': refToDomElement3, 'variableName2': refToDomElement4 } },
-		//   {'controller': {'controllerName': refToDomElement5, 'controllerName': refToDomElement6 } }
+		//   {'model': {'variableName': refToDomElement1, 'variableName2': refToDomElement2 } },
+		//   {'controller': {'controllerName': refToDomElement3, 'controllerName': refToDomElement4 } }
+		//   {'click': {'methodName': [refToDomElement5, refToDomElement6], 'methodName2': [refToDomElement7] } },
 		// }
 		this.elements = null;
 
@@ -187,6 +225,7 @@ var MVC = (function($) {
 			var curAttr = elements[attrList[x]];
 			var attributeName = attrPrefix + '-' + attrList[x];
 			var curElems = view.find('[' + attributeName + ']');
+			var isClickAttr = attrList[x] === 'click';
 
 			// If we encounter any radio groups, we need to append IDs to the end of their names to
 			// make them distinguishable since each radio in the group has the same
@@ -201,8 +240,16 @@ var MVC = (function($) {
 
 				// A group of radio buttons each have the same model name, so we need to number them
 				if(type !== "radio") {
-					curAttr[variableName] = curElems[a];
+					if(!isClickAttr)
+						curAttr[variableName] = curElems[a];
+					else {
+						// Multipe elements can have the same click attribute, so we keep an array
+						if(!curAttr.hasOwnProperty(variableName))
+							curAttr[variableName] = [];
+						curAttr[variableName].push(curElems[a]);
+					}
 				} else {
+					// TODO: Radios should just be another hash, including a field for the selected
 					if(!radioCounters.hasOwnProperty(variableName)) {
 						radioCounters[variableName] = 0;
 						var newVarName = variableName; // Don't change the name of the first radio
@@ -211,7 +258,14 @@ var MVC = (function($) {
 						curElems[a].setAttribute(attrPrefix + '-model', newVarName);
 					}
 
-					curAttr[newVarName] = curElems[a];
+					if(!isClickAttr)
+						curAttr[newVarName] = curElems[a];
+					else {
+						// Multipe elements can have the same click attribute, so we keep an array
+						if(!curAttr.hasOwnProperty(newVarName))
+							curAttr[newVarName] = [];
+						curAttr[newVarName].push(curElems[a]);
+					}
 				}
 			}
 		}
@@ -239,17 +293,21 @@ var MVC = (function($) {
 		// corresponding method defined in the controller on $scope.
 		var clickElements = model.elements['click'];
 		for(var funcName in clickElements) {
-			$(clickElements[funcName]).click(function() {
-				var functionName = this.getAttribute(attrPrefix + '-click');
+			var arrOfElem = clickElements[funcName];
+			// Iterate through the multiple elements that call this single function
+			for(var x = 0, l = arrOfElem.length; x < l; x++) {
+				$(arrOfElem[x]).click(function() {
+					var functionName = this.getAttribute(attrPrefix + '-click');
 
-				// Remove the trailing parenthesis ()
-				functionName = functionName.substring(0, functionName.length-2);
+					// Remove the trailing parenthesis ()
+					functionName = functionName.substring(0, functionName.length-2);
 
-				if($scope.hasOwnProperty(functionName)) {
-					updateModel(model);
-					$scope[functionName].call(this);
-				}
-			});
+					if($scope.hasOwnProperty(functionName)) {
+						updateModel(model);
+						$scope[functionName].call(this);
+					}
+				});
+			}
 		}
 	};
 
@@ -517,6 +575,35 @@ var MVC = (function($) {
 			});
 
 			return self;
+		},
+
+		/**
+		 * Creates a factory object that can be used to share data between
+		 * controllers. The method also optionally returns the factory object
+		 * after it has been created if the second parameter is not defined.
+		 * 
+		 * @param  {String}   name    The name of the factory used for lookups
+		 * @param  {Function} factory A method which returns an object with the
+		 *    factory's data and methods
+		 * 
+		 * @return {Object} If the factory object is passed, true on successfully
+		 *    creating the factory and false if not. Otherwise, the factory object
+		 *    that has already been created, or false if it cannot be found.
+		 */
+		factory: function(name, factory) {
+			if(arguments.length > 1) {
+				if(!factories.hasOwnProperty(name))
+					factories[name] = factory.call(this, $rootScope);
+				else {
+					console.log("Factory \"" + name + "\" already exists!");
+					return false;
+				}
+			} else {
+				if(factories.hasOwnProperty(name))
+					return factories[name];
+				return false;
+			}
+			return true;
 		},
 
 		/**

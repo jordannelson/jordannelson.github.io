@@ -10,7 +10,9 @@
 
 	<script src="lib/jquery/jquery-1.11.1.js"></script>
 	<script src="lib/jquery-mobile/jquery.mobile-1.4.2.js"></script>
-	<script src="js/minified.js"></script>
+	<script src="js/widgets.js"></script>
+	<script src="js/mvc.js"></script>
+	<script src="js/main.js"></script>
 </head>
 <body>
 	<!-- Tabs Page -->
@@ -296,16 +298,15 @@
 		<div role="main" class="ui-content">
 			<fieldset data-role="controlgroup" data-type="horizontal" class="text-center">
 				<input type="radio" name="radio-choice-h-2" id="radio-choice-h-2-imperial" value="imperial" mvc-model="measurementUnit">
-				<label for="radio-choice-h-2-imperial">Imperial</label>
+				<label for="radio-choice-h-2-imperial" mvc-click="changeUnitDisplay()">Imperial</label>
 				<input type="radio" name="radio-choice-h-2" id="radio-choice-h-2-metric" value="metric" mvc-model="measurementUnit">
-				<label for="radio-choice-h-2-metric">Metric</label>
+				<label for="radio-choice-h-2-metric" mvc-click="changeUnitDisplay()">Metric</label>
 			</fieldset>
 
 			<br>
 
 			<label for="text-employee-number">
-				Employee Number
-				<span class="required-field">*</span>
+				Employee Number <span class="required-field">*</span>
 			</label>
 			<input type="text" name="text-employee-number" mvc-model="employeeNumber">
 
@@ -336,8 +337,7 @@
 			</div>
 
 			<label for="text-vin-number">
-				VIN Number
-				<span class="required-field">*</span>
+				VIN Number <span class="required-field">*</span>
 			</label>
 			<input type="text" name="text-vin-number" mvc-model="vinNumber">
 
@@ -349,7 +349,7 @@
 					<td width="98%">
 						<input type="number" name="num-odometer-reading" mvc-model="odometer">
 					</td>
-					<td width="2%">
+					<td width="2%" id="unitDisplay">
 						Mi
 					</td>
 				</tr>
@@ -361,6 +361,29 @@
 				</div>
 				<div class="ui-block-b">
 					<input type="reset" value="Cancel" data-theme="b" mvc-click="cancel()">
+				</div>
+			</fieldset>
+		</div>
+	</div>
+
+	<!-- Add New Trip Page -->
+	<div data-role="page" id="addNewTripPage" mvc-controller="addNewTripCtrl">
+		<div data-role="header">
+			<h1>Add New Trip</h1>
+		</div>
+		<div role="main" class="ui-content">
+			<label for="text-new-trip-name">Enter a name for the trip</label>
+			<input type="text" name="text-new-trip-name" mvc-model="name">
+
+			<label for="text-new-trip-distance">Enter trip distance</label>
+			<input type="number" name="text-new-trip-distance" mvc-model="distance">
+
+			<fieldset class="ui-grid-a">
+				<div class="ui-block-a">
+					<input type="button" value="Save" data-theme="a" mvc-click="saveNewTrip()">
+				</div>
+				<div class="ui-block-b">
+					<a href="#" data-rel="back" class="ui-btn" mvc-click="cancel()">Cancel</a>
 				</div>
 			</fieldset>
 		</div>

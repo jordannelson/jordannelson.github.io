@@ -1,3 +1,19 @@
+MVC.factory('trips', function($rootScope) {
+	var factory = {};
+
+	factory.trips = [
+		{ name: 'Home/Work', distance: 875 },
+		{ name: 'Home/Grocery', distance: 23 }
+	];
+
+	factory.broadcastNewTrip = function(trip) {
+		this.trips.push(trip);
+		$rootScope.$broadcast('addNewTripEvent');
+	};
+
+	return factory;
+});
+
 // Enter Trip Data
 MVC.controller('enterTripDataCtrl', '#enterTripDataPage', function($scope) {
 	// Make AJAX call here
@@ -8,13 +24,27 @@ MVC.controller('enterTripDataCtrl', '#enterTripDataPage', function($scope) {
 	$scope.beginningOdometer = 123;
 	$scope.endingOdometer = 321;
 	$scope.favoriteTrip = "2";
+
+	var factory = MVC.factory('trips');
+	var trips = factory.trips;
+
 	$scope.favoriteTrips = [
-		{ value: "1", text: "First Text" },
-		{ value: "2", text: "Second Text" },
+		{ value: "1", text: trips[0].name },
+		{ value: "2", text: trips[1].name },
 		{ value: "3", text: "Add New Trip", action: function() {
-			console.log("open modal window");
+			$.mobile.changePage("#addNewTripPage", {
+				transition: "none",
+				changeHash: true,
+				role: 'dialog'
+			});
 		}}
 	];
+
+	// When a new trip is added
+	$scope.$on('addNewTripEvent', function() {
+		$scope.favoriteTrips.push(factory.trips[factory.trips.length-1]);
+		$scope.$apply(); // Update the view
+	});
 
 	// Callback function for submitting the data
 	$scope.saveTrip = function() {
@@ -23,6 +53,29 @@ MVC.controller('enterTripDataCtrl', '#enterTripDataPage', function($scope) {
 		console.log("beginningOdometer = " + $scope.beginningOdometer);
 		console.log("endingOdometer = " + $scope.endingOdometer);
 		console.log("favoriteTrip = " + $scope.favoriteTrip);
+
+		$.mobile.changePage("#tabsPage", {
+			transition: "none",
+			changeHash: true
+		});
+	}
+});
+
+// Enter Trip Data
+MVC.controller('addNewTripCtrl', '#addNewTripPage', function($scope) {
+	var factory = MVC.factory('trips');
+
+	// Set the field values
+	$scope.name = 'new trip name';
+	$scope.distance = 587;
+
+	// Callback function for submitting the data
+	$scope.saveNewTrip = function() {
+		factory.broadcastNewTrip({
+			name: $scope.name,
+			distance: $scope.distance
+		});
+
 		$.mobile.changePage("#tabsPage", {
 			transition: "none",
 			changeHash: true
@@ -73,7 +126,7 @@ MVC.controller('reportsCtrl', '#tabsPage', function($scope) {
 MVC.controller('firstVisitCtrl', '#firstVisitPage', function($scope) {
 	// Make AJAX call here
 
-	$scope.measurementUnit = 'metric';
+	$scope.measurementUnit = 'imperial';
 	$scope.employeeNumber = 12345678;
 	$scope.vehicleYear = '2013';
 	$scope.vehicleMake = 'Nissan';
@@ -120,20 +173,14 @@ MVC.controller('firstVisitCtrl', '#firstVisitPage', function($scope) {
 	$scope.cancel = function() {
 		console.log("cancel");
 	}
+
+	$scope.changeUnitDisplay = function() {
+		if($scope.measurementUnit === 'metric') {
+			$('#unitDisplay').html('Mi');
+		} else {
+			$('#unitDisplay').html('Km');
+		}
+	}
 });
 
 MVC.init();
-
-function generateJQMDateStr() {
-	var today = new Date();
-	var dd = today.getDate().toString();
-	var mm = (today.getMonth() + 1).toString(); // January is 0
-	var yyyy = today.getFullYear().toString();
-
-	if(dd.length <= 1)
-		dd = "0" + dd;
-	if(mm.length <= 1)
-		mm = "0" + mm;
-
-	return yyyy + '-' + mm + '-' + dd;
-}
